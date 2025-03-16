@@ -140,27 +140,30 @@ public class WebViewDialog extends Dialog {
 
     @JavascriptInterface
     public void close() {
-      try {
-        // close webview safely
-        if (activity != null) {
-          activity.runOnUiThread(() -> {
-            try {
-              dismiss();
-              if (_webView != null) {
-                String currentUrl = _webView.getUrl();
-                if (_options != null && _options.getCallbacks() != null) {
-                  _options.getCallbacks().closeEvent(currentUrl);
-                }
-                _webView.destroy();
-              }
-            } catch (Exception e) {
-              Log.e("InAppBrowser", "Error closing WebView: " + e.getMessage());
+        try {
+            // close webview safely
+            if (activity != null) {
+                activity.runOnUiThread(() -> {
+                    try {
+                        // Capturar la URL antes de destruir el WebView
+                        String currentUrl = (_webView != null) ? _webView.getUrl() : null;
+                    
+                        dismiss();
+                        if (_options != null && _options.getCallbacks() != null) {
+                            _options.getCallbacks().closeEvent(currentUrl);
+                        }
+                    
+                        if (_webView != null) {
+                            _webView.destroy();
+                        }
+                    } catch (Exception e) {
+                        Log.e("InAppBrowser", "Error closing WebView: " + e.getMessage());
+                    }
+                });
             }
-          });
+        } catch (Exception e) {
+            Log.e("InAppBrowser", "Error in close: " + e.getMessage());
         }
-      } catch (Exception e) {
-        Log.e("InAppBrowser", "Error in close: " + e.getMessage());
-      }
     }
   }
 
@@ -538,35 +541,46 @@ public class WebViewDialog extends Dialog {
 
     ImageButton closeButton = _toolbar.findViewById(R.id.closeButton);
     closeButton.setOnClickListener(
-      new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-          // if closeModal true then display a native modal to check if the user is sure to close the browser
-          if (_options.getCloseModal()) {
-            new AlertDialog.Builder(_context)
-              .setTitle(_options.getCloseModalTitle())
-              .setMessage(_options.getCloseModalDescription())
-              .setPositiveButton(
-                _options.getCloseModalOk(),
-                new OnClickListener() {
-                  public void onClick(DialogInterface dialog, int which) {
-                    // Close button clicked, do something
-                    dismiss();
-                    _options.getCallbacks().closeEvent(_webView.getUrl());
-                    _webView.destroy();
-                  }
+  new View.OnClickListener() {
+    @Override
+    public void onClick(View view) {
+      // Capturar la URL antes de cualquier operación que pueda destruir el WebView
+      String currentUrl = (_webView != null) ? _webView.getUrl() : null;
+      
+      // if closeModal true then display a native modal to check if the user is sure to close the browser
+      if (_options.getCloseModal()) {
+        new AlertDialog.Builder(_context)
+          .setTitle(_options.getCloseModalTitle())
+          .setMessage(_options.getCloseModalDescription())
+          .setPositiveButton(
+            _options.getCloseModalOk(),
+            new OnClickListener() {
+              public void onClick(DialogInterface dialog, int which) {
+                // Close button clicked, do something
+                dismiss();
+                if (_options.getCallbacks() != null) {
+                  _options.getCallbacks().closeEvent(currentUrl);
                 }
-              )
-              .setNegativeButton(_options.getCloseModalCancel(), null)
-              .show();
-          } else {
-            dismiss();
-            _options.getCallbacks().closeEvent(_webView.getUrl());
-            _webView.destroy();
-          }
+                if (_webView != null) {
+                  _webView.destroy();
+                }
+              }
+            }
+          )
+          .setNegativeButton(_options.getCloseModalCancel(), null)
+          .show();
+      } else {
+        dismiss();
+        if (_options.getCallbacks() != null) {
+          _options.getCallbacks().closeEvent(currentUrl);
+        }
+        if (_webView != null) {
+          _webView.destroy();
         }
       }
-    );
+    }
+  }
+);
 
     if (_options.showArrow()) {
       closeButton.setImageResource(R.drawable.arrow_back_enabled);
