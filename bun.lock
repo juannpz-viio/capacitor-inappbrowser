@@ -2,7 +2,7 @@
   "lockfileVersion": 1,
   "workspaces": {
     "": {
-      "name": "@capgo/inappbrowser",
+      "name": "@juannpz/inappbrowser",
       "devDependencies": {
         "@capacitor/android": "^7.0.0",
         "@capacitor/cli": "^7.0.0",

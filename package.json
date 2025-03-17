@@ -1,6 +1,6 @@
 {
   "name": "@juannpz/inappbrowser",
-  "version": "7.3.0-fix.2",
+  "version": "7.3.0-fix.3",
   "description": "Capacitor plugin in app browser",
   "main": "dist/plugin.cjs.js",
   "module": "dist/esm/index.js",
@@ -11,7 +11,7 @@
     "android/build.gradle",
     "dist/",
     "ios/Plugin/",
-    "CapgoInappbrowser.podspec"
+    "juannpzInappbrowser.podspec"
   ],
   "author": "Martin Donadieu <martin@capgo.app>",
   "license": "MIT",
