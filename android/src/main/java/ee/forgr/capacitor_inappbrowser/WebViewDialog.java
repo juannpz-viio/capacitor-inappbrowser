@@ -452,7 +452,9 @@ public class WebViewDialog extends Dialog {
   }
 
   public void destroy() {
-    _webView.destroy();
+    if (_webView != null) {
+        _webView.destroy();
+    }
   }
 
   public String getUrl() {

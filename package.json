@@ -1,6 +1,6 @@
 {
   "name": "@juannpz/inappbrowser",
-  "version": "7.3.0-fix",
+  "version": "7.3.0-fix.2",
   "description": "Capacitor plugin in app browser",
   "main": "dist/plugin.cjs.js",
   "module": "dist/esm/index.js",
